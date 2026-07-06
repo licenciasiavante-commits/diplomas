@@ -765,9 +765,9 @@
           <!-- Card: Total Doc. Maestros -->
           <div class="card summary-card">
             <div class="summary-info">
-              <h3>Documentos Maestros</h3>
+              <h3>Documentos Maestros Creados</h3>
               <div class="val" id="lblGlobalMasters">0 / 0</div>
-              <div class="subtext">Temas desarrollados con documento maestro</div>
+              <div class="subtext">Temas con documento maestro creado</div>
             </div>
             <div class="progress-ring">
               <svg width="90" height="90">
@@ -781,9 +781,9 @@
           <!-- Card: Total Bibliografía -->
           <div class="card summary-card">
             <div class="summary-info">
-              <h3>Temas con Bibliografía</h3>
+              <h3>Documentación / Bibliografía Entregada</h3>
               <div class="val" id="lblGlobalBib">0 / 0</div>
-              <div class="subtext">Temas con al menos un artículo o PDF</div>
+              <div class="subtext">Temas con documentación o bibliografía entregada</div>
             </div>
             <div class="progress-ring">
               <svg width="90" height="90">
@@ -797,9 +797,9 @@
           <!-- Card: Validación General -->
           <div class="card summary-card">
             <div class="summary-info">
-              <h3>Temas Validados</h3>
+              <h3>Documentos Maestros Validados</h3>
               <div class="val" id="lblGlobalVal">0 / 0</div>
-              <div class="subtext">Documentos maestros revisados y validados</div>
+              <div class="subtext">Documentos maestros creados y validados</div>
             </div>
             <div class="progress-ring">
               <svg width="90" height="90">
@@ -825,12 +825,12 @@
           </div>
           <div class="filter-group">
             <button class="filter-btn active" id="f-all" onclick="setFilter('all')">Todos</button>
-            <button class="filter-btn" id="f-has_master" onclick="setFilter('has_master')">Con Doc. Maestro</button>
-            <button class="filter-btn" id="f-no_master" onclick="setFilter('no_master')">Sin Doc. Maestro</button>
-            <button class="filter-btn" id="f-is_validated" onclick="setFilter('is_validated')">Validados</button>
-            <button class="filter-btn" id="f-no_validated" onclick="setFilter('no_validated')">Sin Validar</button>
-            <button class="filter-btn" id="f-has_bib" onclick="setFilter('has_bib')">Con Bibliografía</button>
-            <button class="filter-btn" id="f-no_bib" onclick="setFilter('no_bib')">Sin Bibliografía</button>
+            <button class="filter-btn" id="f-has_master" onclick="setFilter('has_master')">Doc. Maestro Creado</button>
+            <button class="filter-btn" id="f-no_master" onclick="setFilter('no_master')">Doc. Maestro No Creado</button>
+            <button class="filter-btn" id="f-is_validated" onclick="setFilter('is_validated')">Doc. Maestro Validado</button>
+            <button class="filter-btn" id="f-no_validated" onclick="setFilter('no_validated')">Doc. Maestro No Validado</button>
+            <button class="filter-btn" id="f-has_bib" onclick="setFilter('has_bib')">Doc. / Bib. Entregada</button>
+            <button class="filter-btn" id="f-no_bib" onclick="setFilter('no_bib')">Doc. / Bib. No Entregada</button>
           </div>
         </div>
 
@@ -1298,15 +1298,15 @@
               </div>
               <div class="topic-info-grid">
                 <div class="topic-info-item">
-                  <span class="info-label">Bibliografía:</span>
+                  <span class="info-label">Documentación / Bibliografia entregada:</span>
                   ${bibHtml}
                 </div>
                 <div class="topic-info-item">
-                  <span class="info-label">Documento:</span>
+                  <span class="info-label">Documento maestro creado:</span>
                   ${masterHtml}
                 </div>
                 <div class="topic-info-item">
-                  <span class="info-label">Validación:</span>
+                  <span class="info-label">Documento maestro validado:</span>
                   ${validationHtml}
                 </div>
               </div>
