@@ -47,7 +47,7 @@ def get_merged_data():
     file_status = read_json_file(file_status_file)
     state = read_json_file(state_file)
     
-    # If no file status has been synced yet, we return the state (which might be empty)
+    # If no file status has been synced yet, we return empty
     if not file_status:
         return {}
         
@@ -59,20 +59,15 @@ def get_merged_data():
             # Get overrides from state
             override = state.get(dip_id, {}).get(t_num_str, {})
             
-            # Merge fields
-            t_merged = t.copy()
-            t_merged["has_master"] = override.get("has_master", False)
-            t_merged["master_registered_at"] = override.get("master_registered_at", None)
-            t_merged["is_validated"] = override.get("is_validated", False)
-            t_merged["validated_at"] = override.get("validated_at", None)
-            
-            # If has_bib is overridden in state, use it, otherwise use auto-detected status (bib_count > 0)
-            override_has_bib = override.get("has_bib", None)
-            if override_has_bib is not None:
-                t_merged["has_bib"] = override_has_bib
-            else:
-                t_merged["has_bib"] = t["bib_count"] > 0
-            
+            t_merged = {
+                "num": t["num"],
+                "title": t["title"],
+                "has_bib": override.get("has_bib", False),
+                "has_master": override.get("has_master", False),
+                "master_registered_at": override.get("master_registered_at", None),
+                "is_validated": override.get("is_validated", False),
+                "validated_at": override.get("validated_at", None)
+            }
             topics_list.append(t_merged)
             
         merged[dip_id] = {
@@ -149,7 +144,7 @@ def api_update():
             "master_registered_at": None,
             "is_validated": False,
             "validated_at": None,
-            "has_bib": None
+            "has_bib": False
         }
         
     # Update field and register timestamp
@@ -158,15 +153,8 @@ def api_update():
     if field == "has_master":
         state[dip_id][topic_num]["has_master"] = value
         state[dip_id][topic_num]["master_registered_at"] = now_str if value else None
-        # If we remove the master doc, we should also remove its validation status
-        if not value:
-            state[dip_id][topic_num]["is_validated"] = False
-            state[dip_id][topic_num]["validated_at"] = None
             
     elif field == "is_validated":
-        # Can only validate if has_master is True
-        if value and not state[dip_id][topic_num]["has_master"]:
-            return jsonify({"success": False, "message": "No se puede validar un tema que no ha sido marcado como desarrollado."}), 400
         state[dip_id][topic_num]["is_validated"] = value
         state[dip_id][topic_num]["validated_at"] = now_str if value else None
         
