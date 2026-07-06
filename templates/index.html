@@ -1185,27 +1185,19 @@
       }
 
       filteredTopics.forEach(t => {
-        const isExpanded = expandedTopics.has(`${activeDiplomaId}_${t.num}`);
-        
-        // 1. Bibliografía status: si / no / falta
+        // 1. Bibliografía status: si / no
         let bibHtml = "";
         if (isAdmin) {
           bibHtml = `
             <div style="display: inline-flex; align-items: center; gap: 0.3rem;" onclick="event.stopPropagation()">
               <input type="checkbox" class="admin-checkbox" ${t.has_bib ? 'checked' : ''} onchange="toggleBibStatus('${activeDiplomaId}', ${t.num}, this.checked)">
-              <span class="info-val ${t.has_bib ? 'val-si' : (t.has_folder ? 'val-no' : 'val-falta')}">
-                ${t.has_bib ? 'Sí' : (t.has_folder ? 'No' : 'Falta')}
+              <span class="info-val ${t.has_bib ? 'val-si' : 'val-no'}">
+                ${t.has_bib ? 'Sí' : 'No'}
               </span>
             </div>
           `;
         } else {
-          if (t.has_bib) {
-            bibHtml = `<span class="info-val val-si">Sí (${t.bib_count} PDFs)</span>`;
-          } else if (t.has_folder) {
-            bibHtml = `<span class="info-val val-no">No</span>`;
-          } else {
-            bibHtml = `<span class="info-val val-falta">Falta</span>`;
-          }
+          bibHtml = `<span class="info-val ${t.has_bib ? 'val-si' : 'val-no'}">${t.has_bib ? 'Sí' : 'No'}</span>`;
         }
 
         // 2. Documento status: si (date) / no
@@ -1233,8 +1225,8 @@
         if (isAdmin) {
           validationHtml = `
             <div style="display: inline-flex; align-items: center; gap: 0.3rem;" onclick="event.stopPropagation()">
-              <input type="checkbox" class="admin-checkbox" ${t.is_validated ? 'checked' : ''} ${t.has_master ? '' : 'disabled'} onchange="toggleValidationStatus('${activeDiplomaId}', ${t.num}, this.checked)">
-              <span class="info-val ${t.is_validated ? 'val-si' : 'val-no'}" style="opacity: ${t.has_master ? 1 : 0.5};">
+              <input type="checkbox" class="admin-checkbox" ${t.is_validated ? 'checked' : ''} onchange="toggleValidationStatus('${activeDiplomaId}', ${t.num}, this.checked)">
+              <span class="info-val ${t.is_validated ? 'val-si' : 'val-no'}">
                 ${t.is_validated ? 'Sí' : 'No'}
               </span>
               ${t.validated_at ? `<span class="info-date">(${t.validated_at})</span>` : ''}
@@ -1248,53 +1240,14 @@
           }
         }
 
-        // Expandable details block
-        let detailsHtml = "";
-        if (isExpanded) {
-          let fileListHtml = `<span style="font-size:0.85rem; color:var(--text-muted)">Carpeta vacía o sin archivos.</span>`;
-          if (t.all_files && t.all_files.length > 0) {
-            fileListHtml = `<ul class="file-list">`;
-            t.all_files.forEach(f => {
-              const isPdf = f.toLowerCase().endswith ? f.toLowerCase().endswith('.pdf') : f.toLowerCase().indexOf('.pdf') !== -1;
-              const isWord = f.toLowerCase().indexOf('.doc') !== -1 || f.toLowerCase().indexOf('.odt') !== -1;
-              const icon = isPdf ? '📄 (PDF)' : (isWord ? '📝 (Word)' : '📁');
-              fileListHtml += `<li class="file-item">${icon} ${f}</li>`;
-            });
-            fileListHtml += `</ul>`;
-          }
-
-          detailsHtml = `
-            <div class="topic-details" style="display: block;">
-              <div class="details-grid">
-                <div class="details-section">
-                  <h5>Carpeta en OneDrive</h5>
-                  <p style="font-size:0.85rem; font-family:monospace; word-break:break-all;">
-                    ${t.has_folder ? t.rel_folder_path : 'No se ha creado la carpeta en disco para este tema.'}
-                  </p>
-                  ${t.has_folder ? '' : `
-                    <div style="font-size:0.75rem; color:var(--warning); margin-top:0.5rem;">
-                      💡 Para crearla, añade una subcarpeta en tu ordenador con la numeración "${t.num}" (ej. "Tema ${t.num}").
-                    </div>
-                  `}
-                </div>
-                <div class="details-section">
-                  <h5>Archivos Detectados (${t.all_files ? t.all_files.length : 0})</h5>
-                  ${fileListHtml}
-                </div>
-              </div>
-            </div>
-          `;
-        }
-
         container.innerHTML += `
           <div>
-            <div class="topic-row ${isExpanded ? 'expanded' : ''}" onclick="toggleExpandTopic('${activeDiplomaId}', ${t.num})">
+            <div class="topic-row">
               <div class="topic-row-header">
                 <div>
                   <span class="topic-num-badge">Tema ${t.num}.</span>
                   <span class="topic-title">${t.title}</span>
                 </div>
-                <div style="font-size: 0.8rem; opacity: 0.5; color: var(--text-muted);">${isExpanded ? '▲' : '▼'}</div>
               </div>
               <div class="topic-info-grid">
                 <div class="topic-info-item">
@@ -1311,7 +1264,6 @@
                 </div>
               </div>
             </div>
-            ${detailsHtml}
           </div>
         `;
       });
