@@ -1012,7 +1012,7 @@
         dip.topics.forEach(t => {
           if (t.has_master) totalMasters++;
           if (t.is_validated) totalValidated++;
-          if (t.bib_count > 0) totalBib++;
+          if (t.has_bib) totalBib++;
         });
       }
 
@@ -1050,7 +1050,7 @@
         dip.topics.forEach(t => {
           if (t.has_master) developed++;
           if (t.is_validated) validated++;
-          if (t.bib_count > 0) bib++;
+          if (t.has_bib) bib++;
         });
 
         const devPerc = total > 0 ? Math.round((developed / total) * 100) : 0;
@@ -1162,8 +1162,8 @@
         if (currentFilter === 'no_master' && t.has_master) return false;
         if (currentFilter === 'is_validated' && !t.is_validated) return false;
         if (currentFilter === 'no_validated' && t.is_validated) return false;
-        if (currentFilter === 'has_bib' && t.bib_count === 0) return false;
-        if (currentFilter === 'no_bib' && t.bib_count > 0) return false;
+        if (currentFilter === 'has_bib' && !t.has_bib) return false;
+        if (currentFilter === 'no_bib' && t.has_bib) return false;
 
         // 2. Apply search query
         if (searchQuery) {
@@ -1189,12 +1189,23 @@
         
         // 1. Bibliografía status: si / no / falta
         let bibHtml = "";
-        if (t.bib_count > 0) {
-          bibHtml = `<span class="info-val val-si">Sí (${t.bib_count} PDFs)</span>`;
-        } else if (t.has_folder) {
-          bibHtml = `<span class="info-val val-no">No</span>`;
+        if (isAdmin) {
+          bibHtml = `
+            <div style="display: inline-flex; align-items: center; gap: 0.3rem;" onclick="event.stopPropagation()">
+              <input type="checkbox" class="admin-checkbox" ${t.has_bib ? 'checked' : ''} onchange="toggleBibStatus('${activeDiplomaId}', ${t.num}, this.checked)">
+              <span class="info-val ${t.has_bib ? 'val-si' : (t.has_folder ? 'val-no' : 'val-falta')}">
+                ${t.has_bib ? 'Sí' : (t.has_folder ? 'No' : 'Falta')}
+              </span>
+            </div>
+          `;
         } else {
-          bibHtml = `<span class="info-val val-falta">Falta</span>`;
+          if (t.has_bib) {
+            bibHtml = `<span class="info-val val-si">Sí (${t.bib_count} PDFs)</span>`;
+          } else if (t.has_folder) {
+            bibHtml = `<span class="info-val val-no">No</span>`;
+          } else {
+            bibHtml = `<span class="info-val val-falta">Falta</span>`;
+          }
         }
 
         // 2. Documento status: si (date) / no
@@ -1455,6 +1466,39 @@
       })
       .catch(err => {
         console.error("Error updating validation status:", err);
+        alert("Error de red al actualizar.");
+      });
+    }
+
+    function toggleBibStatus(dipId, topicNum, value) {
+      fetch("/api/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          password: adminPassword,
+          dip_id: dipId,
+          topic_num: topicNum,
+          field: "has_bib",
+          value: value
+        })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          // Update local memory
+          const dip = dashboardData[dipId];
+          const topic = dip.topics.find(t => t.num === topicNum);
+          if (topic) {
+            topic.has_bib = res.updated_topic.has_bib;
+          }
+          applyFiltersAndSearch();
+        } else {
+          alert("Error: " + res.message);
+          fetchData();
+        }
+      })
+      .catch(err => {
+        console.error("Error updating bibliography status:", err);
         alert("Error de red al actualizar.");
       });
     }
