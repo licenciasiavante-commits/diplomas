@@ -66,6 +66,13 @@ def get_merged_data():
             t_merged["is_validated"] = override.get("is_validated", False)
             t_merged["validated_at"] = override.get("validated_at", None)
             
+            # If has_bib is overridden in state, use it, otherwise use auto-detected status (bib_count > 0)
+            override_has_bib = override.get("has_bib", None)
+            if override_has_bib is not None:
+                t_merged["has_bib"] = override_has_bib
+            else:
+                t_merged["has_bib"] = t["bib_count"] > 0
+            
             topics_list.append(t_merged)
             
         merged[dip_id] = {
@@ -122,7 +129,7 @@ def api_update():
     password = req_data.get("password")
     dip_id = req_data.get("dip_id")
     topic_num = str(req_data.get("topic_num"))
-    field = req_data.get("field") # 'has_master' or 'is_validated'
+    field = request.json.get("field") # 'has_master', 'is_validated', or 'has_bib'
     value = bool(req_data.get("value"))
     
     if password != ADMIN_PASSWORD:
@@ -141,7 +148,8 @@ def api_update():
             "has_master": False,
             "master_registered_at": None,
             "is_validated": False,
-            "validated_at": None
+            "validated_at": None,
+            "has_bib": None
         }
         
     # Update field and register timestamp
@@ -161,6 +169,9 @@ def api_update():
             return jsonify({"success": False, "message": "No se puede validar un tema que no ha sido marcado como desarrollado."}), 400
         state[dip_id][topic_num]["is_validated"] = value
         state[dip_id][topic_num]["validated_at"] = now_str if value else None
+        
+    elif field == "has_bib":
+        state[dip_id][topic_num]["has_bib"] = value
         
     if write_json_file(state_file, state):
         return jsonify({
