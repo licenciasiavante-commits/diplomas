@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAS - Cuadro de Mandos Dentistas 2026</title>
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.15);
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.15);
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      --info: #06b6d4;
+      --info-bg: rgba(6, 182, 212, 0.15);
+      --border-color: #334155;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+      --glass-bg: rgba(30, 41, 59, 0.7);
+      --glass-blur: blur(12px);
+    }
+
+    .light-theme {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #4f46e5;
+      --primary-hover: #3730a3;
+      --success: #059669;
+      --success-bg: rgba(5, 150, 105, 0.1);
+      --warning: #d97706;
+      --warning-bg: rgba(217, 119, 6, 0.1);
+      --danger: #dc2626;
+      --danger-bg: rgba(220, 38, 38, 0.1);
+      --info: #0891b2;
+      --info-bg: rgba(8, 145, 178, 0.1);
+      --border-color: #e2e8f0;
+      --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+      --glass-bg: rgba(255, 255, 255, 0.7);
+      --glass-blur: blur(12px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1.25rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    .header-left h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      background: linear-gradient(135deg, #818cf8, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.25rem;
+    }
+
+    .header-left p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+    .btn-secondary:hover {
+      background-color: var(--border-color);
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      color: var(--text-main);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border-color);
+      width: 40px;
+      height: 40px;
+    }
+    .theme-toggle:hover {
+      background-color: var(--border-color);
+    }
+
+    .admin-indicator {
+      display: none;
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+      color: white;
+      padding: 0.5rem 2rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .main-container {
+      max-width: 1400px;
+      width: 100%;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      flex-grow: 1;
+    }
+
+    /* Tabs Navigation */
+    .tabs-nav {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid var(--border-color);
+      margin-bottom: 2rem;
+      overflow-x: auto;
+      scrollbar-width: none; /* Firefox */
+    }
+    .tabs-nav::-webkit-scrollbar {
+      display: none; /* Chrome/Safari */
+    }
+
+    .tab-btn {
+      padding: 1rem 1.5rem;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+      transition: color 0.2s ease;
+    }
+    .tab-btn:hover {
+      color: var(--text-main);
+    }
+    .tab-btn.active {
+      color: var(--primary);
+    }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: var(--primary);
+    }
+
+    /* Dashboard Widgets */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .summary-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .summary-info h3 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .summary-info .val {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .summary-info .subtext {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* SVG Progress Ring */
+    .progress-ring {
+      position: relative;
+      width: 90px;
+      height: 90px;
+    }
+    .progress-ring-circle {
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+      fill: none;
+      stroke: var(--border-color);
+      stroke-width: 8;
+    }
+    .progress-ring-fill {
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    /* Diploma Progress Cards */
+    .diploma-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .diploma-card {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .diploma-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+    }
+
+    .diploma-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+      min-height: 2.8rem;
+    }
+
+    .prog-bar-container {
+      margin-top: 0.75rem;
+    }
+    .prog-bar-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+    .prog-bar {
+      width: 100%;
+      height: 6px;
+      background-color: var(--border-color);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .prog-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.6s ease;
+    }
+
+    /* Filter & Search Bar */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 1rem;
+      border-radius: 0.75rem;
+      box-shadow: var(--shadow);
+    }
+
+    .search-box {
+      flex-grow: 1;
+      min-width: 280px;
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      padding: 0.6rem 1rem 0.6rem 2.5rem;
+      background-color: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      color: var(--text-main);
+      font-size: 0.875rem;
+      outline: none;
+    }
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+    .search-box::before {
+      content: '🔍';
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.85rem;
+      opacity: 0.6;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.35rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-color);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .filter-btn:hover {
+      color: var(--text-main);
+      border-color: var(--text-muted);
+    }
+    .filter-btn.active {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    /* List of Topics */
+    .topics-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .topic-row {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      padding: 1rem 1.5rem;
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      align-items: center;
+      gap: 1.5rem;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .topic-row:hover {
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .topic-num-badge {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--primary);
+      text-transform: uppercase;
+    }
+
+    .topic-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .topic-status-pills {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .pill-success {
+      background-color: var(--success-bg);
+      color: var(--success);
+    }
+
+    .pill-warning {
+      background-color: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .pill-danger {
+      background-color: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .pill-info {
+      background-color: var(--info-bg);
+      color: var(--info);
+    }
+
+    .pill-secondary {
+      background-color: var(--border-color);
+      color: var(--text-muted);
+    }
+
+    /* Expandable details area */
+    .topic-details {
+      display: none;
+      background-color: rgba(30, 41, 59, 0.4);
+      border: 1px solid var(--border-color);
+      border-top: none;
+      border-radius: 0 0 0.75rem 0.75rem;
+      margin-top: -0.75rem;
+      margin-bottom: 0.5rem;
+      padding: 1.5rem;
+      animation: slideDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .light-theme .topic-details {
+      background-color: rgba(241, 245, 249, 0.5);
+    }
+
+    .topic-row.expanded {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      border-color: var(--primary);
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .details-section h5 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .file-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .file-item {
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      word-break: break-all;
+    }
+
+    /* Form editor in Admin Mode */
+    .admin-controls {
+      background-color: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .admin-checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .admin-checkbox-label input {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+    .date-stamp {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-left: 1.5rem;
+    }
+
+    /* Modal Styling */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 1rem;
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: var(--shadow);
+      animation: modalPop 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal h2 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+    .modal p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-muted);
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      background-color: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    /* Float Admin Button */
+    .admin-float-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4), 0 4px 6px -4px rgba(99, 102, 241, 0.4);
+      cursor: pointer;
+      z-index: 99;
+      transition: all 0.2s ease;
+    }
+    .admin-float-btn:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.05);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .topic-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+      .topic-status-pills {
+        justify-content: flex-start;
+        margin-top: 0.25rem;
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .header-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Admin Active Banner -->
+  <div id="adminBanner" class="admin-indicator">
+    <span>🛡️ <strong>Modo Administrador Activo</strong> - Tienes permisos para registrar documentos y validarlos.</span>
+    <div>
+      <button class="btn btn-secondary" onclick="exportPublicDashboard()" style="background-color: rgba(255,255,255,0.15); border-color: transparent; color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem;">📥 Exportar Web Pública</button>
+      <button class="btn btn-secondary" onclick="logoutAdmin()" style="background-color: rgba(239, 68, 68, 0.2); border-color: transparent; color: white; padding: 0.4rem 0.8rem; font-size: 0.8rem; margin-left: 0.5rem;">Cerrar Sesión</button>
+    </div>
+  </div>
+
+  <header>
+    <div class="header-left">
+      <h1>SAS - Cuadro de Mandos</h1>
+      <p id="subHeaderDesc">Seguimiento de cumplimiento y desarrollo de temas</p>
+    </div>
+    <div class="header-right">
+      <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar Tema">🌓</button>
+      <div id="connectionStatus" class="pill pill-info">Modo Consulta</div>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <!-- Tabs -->
+    <nav class="tabs-nav" id="tabsNav">
+      <button class="tab-btn active" onclick="switchTab('resumen')">📊 Resumen General</button>
+      <!-- Generated via JS -->
+    </nav>
+
+    <!-- Content Sections -->
+    <main>
+      
+      <!-- Section: Resumen General -->
+      <section id="sec-resumen">
+        <div class="dashboard-grid">
+          <!-- Card: Total Doc. Maestros -->
+          <div class="card summary-card">
+            <div class="summary-info">
+              <h3>Documentos Maestros</h3>
+              <div class="val" id="lblGlobalMasters">0 / 0</div>
+              <div class="subtext">Temas desarrollados con documento maestro</div>
+            </div>
+            <div class="progress-ring">
+              <svg width="90" height="90">
+                <circle class="progress-ring-circle" cx="45" cy="45" r="38"></circle>
+                <circle id="ringMasters" class="progress-ring-fill" stroke="var(--primary)" cx="45" cy="45" r="38"></circle>
+              </svg>
+              <div class="progress-text" id="lblGlobalMastersPerc">0%</div>
+            </div>
+          </div>
+
+          <!-- Card: Total Bibliografía -->
+          <div class="card summary-card">
+            <div class="summary-info">
+              <h3>Temas con Bibliografía</h3>
+              <div class="val" id="lblGlobalBib">0 / 0</div>
+              <div class="subtext">Temas con al menos un artículo o PDF</div>
+            </div>
+            <div class="progress-ring">
+              <svg width="90" height="90">
+                <circle class="progress-ring-circle" cx="45" cy="45" r="38"></circle>
+                <circle id="ringBib" class="progress-ring-fill" stroke="var(--success)" cx="45" cy="45" r="38"></circle>
+              </svg>
+              <div class="progress-text" id="lblGlobalBibPerc">0%</div>
+            </div>
+          </div>
+
+          <!-- Card: Validación General -->
+          <div class="card summary-card">
+            <div class="summary-info">
+              <h3>Temas Validados</h3>
+              <div class="val" id="lblGlobalVal">0 / 0</div>
+              <div class="subtext">Documentos maestros revisados y validados</div>
+            </div>
+            <div class="progress-ring">
+              <svg width="90" height="90">
+                <circle class="progress-ring-circle" cx="45" cy="45" r="38"></circle>
+                <circle id="ringVal" class="progress-ring-fill" stroke="var(--info)" cx="45" cy="45" r="38"></circle>
+              </svg>
+              <div class="progress-text" id="lblGlobalValPerc">0%</div>
+            </div>
+          </div>
+        </div>
+
+        <h2 style="margin-bottom: 1.25rem; font-weight: 700; font-size: 1.2rem;">Progreso por Diploma Universitario</h2>
+        <div class="diploma-grid" id="diplomaCardsGrid">
+          <!-- Generated via JS -->
+        </div>
+      </section>
+
+      <!-- Section: Diploma Individual View -->
+      <section id="sec-diploma" style="display: none;">
+        <div class="controls-bar">
+          <div class="search-box">
+            <input type="text" class="search-input" id="txtSearch" placeholder="Buscar tema por título o número..." oninput="applyFiltersAndSearch()">
+          </div>
+          <div class="filter-group">
+            <button class="filter-btn active" id="f-all" onclick="setFilter('all')">Todos</button>
+            <button class="filter-btn" id="f-has_master" onclick="setFilter('has_master')">Con Doc. Maestro</button>
+            <button class="filter-btn" id="f-no_master" onclick="setFilter('no_master')">Sin Doc. Maestro</button>
+            <button class="filter-btn" id="f-is_validated" onclick="setFilter('is_validated')">Validados</button>
+            <button class="filter-btn" id="f-no_validated" onclick="setFilter('no_validated')">Sin Validar</button>
+            <button class="filter-btn" id="f-has_bib" onclick="setFilter('has_bib')">Con Bibliografía</button>
+            <button class="filter-btn" id="f-no_bib" onclick="setFilter('no_bib')">Sin Bibliografía</button>
+          </div>
+        </div>
+
+        <div class="topics-container" id="topicsContainer">
+          <!-- Generated via JS -->
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Float Admin Trigger Button -->
+  <button id="btnAdminFloat" class="admin-float-btn" onclick="openLoginModal()" title="Iniciar sesión como administrador">🔑</button>
+
+  <!-- Login Modal -->
+  <div class="modal-backdrop" id="loginModal">
+    <div class="modal">
+      <h2>Modo Administrador</h2>
+      <p>Introduce la contraseña para habilitar la edición y validación de temas.</p>
+      <form onsubmit="handleLoginSubmit(event)">
+        <div class="form-group">
+          <label for="adminPass">Contraseña</label>
+          <input type="password" id="adminPass" class="form-control" placeholder="••••••••" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeLoginModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Script logic -->
+  <script>
+    // Global data references
+    let dashboardData = null; // Loaded from API or embedded
+    let activeTab = 'resumen'; // Current active tab
+    let activeDiplomaId = '';  // Active diploma ID if inside diploma view
+    let currentFilter = 'all'; // Active filter state
+    let isAdmin = false;       // If admin mode is active
+    let adminPassword = "";    // Stored admin password
+    let expandedTopics = new Set(); // Set of topic IDs currently expanded
+
+    // Theme Manager
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+      const isLight = document.body.classList.contains('light-theme');
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    }
+
+    // Initialize Theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+      document.body.classList.add('light-theme');
+    }
+
+    // Progress SVG helper
+    function setProgressRing(ringId, percent) {
+      const circle = document.getElementById(ringId);
+      if (!circle) return;
+      const radius = circle.r.baseVal.value;
+      const circumference = radius * 2 * Math.PI;
+      circle.style.strokeDasharray = `${circumference} ${circumference}`;
+      
+      const offset = circumference - (percent / 100 * circumference);
+      circle.style.strokeDashoffset = offset;
+    }
+
+    // Initialize application
+    document.addEventListener("DOMContentLoaded", () => {
+      // Check if data is embedded in window (exported version)
+      if (window.EXPORTED_DASHBOARD_DATA) {
+        dashboardData = window.EXPORTED_DASHBOARD_DATA;
+        document.getElementById("btnAdminFloat").style.display = "none";
+        document.getElementById("connectionStatus").className = "pill pill-success";
+        document.getElementById("connectionStatus").innerText = "Web Sincronizada (Pública)";
+        document.getElementById("subHeaderDesc").innerText = "Vista pública de consulta del Cuadro de Mandos";
+        initDashboard();
+      } else {
+        // We are in server mode, fetch data from API
+        fetchData();
+        // Check session storage for existing admin password
+        const storedPass = sessionStorage.getItem("admin_password");
+        if (storedPass) {
+          verifyPassword(storedPass, false);
+        }
+      }
+    });
+
+    function fetchData() {
+      fetch("/api/data")
+        .then(res => res.json())
+        .then(res => {
+          if (res.success && res.is_configured) {
+            dashboardData = res.data;
+            initDashboard();
+            document.getElementById("connectionStatus").className = "pill pill-success";
+            document.getElementById("connectionStatus").innerText = "Servidor Conectado";
+          } else {
+            // Server has no data yet (never synchronized)
+            showNotSyncedWarning();
+          }
+        })
+        .catch(err => {
+          console.error("Error fetching data:", err);
+          document.getElementById("connectionStatus").className = "pill pill-danger";
+          document.getElementById("connectionStatus").innerText = "Desconectado";
+          showErrorState();
+        });
+    }
+
+    function showNotSyncedWarning() {
+      const container = document.querySelector("main");
+      container.innerHTML = `
+        <div class="card" style="text-align: center; padding: 3rem; margin-top: 2rem;">
+          <h2 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--warning);">⚠️ Falta Sincronización Local</h2>
+          <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 1.5rem auto; line-height: 1.6;">
+            El servidor web se ha iniciado correctamente, pero aún no tiene datos sobre tus carpetas o temas. 
+            Por favor, ejecuta el archivo <strong>"actualizar_nube.bat"</strong> en tu ordenador local para escanear tus diplomas e iniciar el cuadro de mandos.
+          </p>
+          <div style="background-color: var(--bg-color); padding: 1rem; border-radius: 0.5rem; font-family: monospace; display: inline-block; font-size: 0.85rem; border: 1px solid var(--border-color); margin-bottom: 2rem;">
+            Ejecutar: sync_local.py en tu ordenador local
+          </div>
+          <br>
+          <button class="btn btn-primary" onclick="location.reload()">Refrescar página</button>
+        </div>
+      `;
+    }
+
+    function showErrorState() {
+      const container = document.querySelector("main");
+      container.innerHTML = `
+        <div class="card" style="text-align: center; padding: 3rem; margin-top: 2rem;">
+          <h2 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--danger);">❌ Error de Conexión</h2>
+          <p style="color: var(--text-muted); max-width: 500px; margin: 0 auto 1.5rem auto; line-height: 1.6;">
+            No se pudo conectar con el servidor para obtener los datos. Asegúrate de estar ejecutando el script del servidor.
+          </p>
+          <button class="btn btn-primary" onclick="location.reload()">Reintentar conexión</button>
+        </div>
+      `;
+    }
+
+    // Initialize Dashboard UI once data is loaded
+    function initDashboard() {
+      renderTabs();
+      updateMetrics();
+      renderDiplomaCards();
+      
+      // If we were inside a diploma when refreshing, restore view
+      if (activeTab === 'diploma' && activeDiplomaId) {
+        renderDiplomaView(activeDiplomaId);
+      }
+    }
+
+    // Render tab buttons
+    function renderTabs() {
+      const tabsNav = document.getElementById("tabsNav");
+      // Keep first tab (Resumen General)
+      tabsNav.innerHTML = `<button class="tab-btn ${activeTab === 'resumen' ? 'active' : ''}" onclick="switchTab('resumen')">📊 Resumen General</button>`;
+      
+      for (const dipId in dashboardData) {
+        const dip = dashboardData[dipId];
+        const isActive = activeTab === 'diploma' && activeDiplomaId === dipId;
+        tabsNav.innerHTML += `<button class="tab-btn ${isActive ? 'active' : ''}" onclick="switchTab('diploma', '${dipId}')">📘 ${dip.name}</button>`;
+      }
+    }
+
+    // Calculate and update global progress metrics
+    function updateMetrics() {
+      let totalTopics = 0;
+      let totalMasters = 0;
+      let totalValidated = 0;
+      let totalBib = 0;
+
+      for (const dipId in dashboardData) {
+        const dip = dashboardData[dipId];
+        totalTopics += dip.topics.length;
+        
+        dip.topics.forEach(t => {
+          if (t.has_master) totalMasters++;
+          if (t.is_validated) totalValidated++;
+          if (t.bib_count > 0) totalBib++;
+        });
+      }
+
+      // Update HTML Labels
+      document.getElementById("lblGlobalMasters").innerText = `${totalMasters} / ${totalTopics}`;
+      document.getElementById("lblGlobalBib").innerText = `${totalBib} / ${totalTopics}`;
+      document.getElementById("lblGlobalVal").innerText = `${totalValidated} / ${totalTopics}`;
+
+      const masterPerc = totalTopics > 0 ? Math.round((totalMasters / totalTopics) * 100) : 0;
+      const bibPerc = totalTopics > 0 ? Math.round((totalBib / totalTopics) * 100) : 0;
+      const valPerc = totalTopics > 0 ? Math.round((totalValidated / totalTopics) * 100) : 0;
+
+      document.getElementById("lblGlobalMastersPerc").innerText = `${masterPerc}%`;
+      document.getElementById("lblGlobalBibPerc").innerText = `${bibPerc}%`;
+      document.getElementById("lblGlobalValPerc").innerText = `${valPerc}%`;
+
+      setProgressRing("ringMasters", masterPerc);
+      setProgressRing("ringBib", bibPerc);
+      setProgressRing("ringVal", valPerc);
+    }
+
+    // Render Diploma cards in General Summary
+    function renderDiplomaCards() {
+      const container = document.getElementById("diplomaCardsGrid");
+      container.innerHTML = "";
+
+      for (const dipId in dashboardData) {
+        const dip = dashboardData[dipId];
+        
+        let total = dip.topics.length;
+        let developed = 0;
+        let validated = 0;
+        let bib = 0;
+
+        dip.topics.forEach(t => {
+          if (t.has_master) developed++;
+          if (t.is_validated) validated++;
+          if (t.bib_count > 0) bib++;
+        });
+
+        const devPerc = total > 0 ? Math.round((developed / total) * 100) : 0;
+        const valPerc = total > 0 ? Math.round((validated / total) * 100) : 0;
+        const bibPerc = total > 0 ? Math.round((bib / total) * 100) : 0;
+
+        container.innerHTML += `
+          <div class="card diploma-card" onclick="switchTab('diploma', '${dipId}')">
+            <h4>${dip.name}</h4>
+            
+            <div class="prog-bar-container">
+              <div class="prog-bar-header">
+                <span>Doc. Maestro: ${developed}/${total}</span>
+                <span>${devPerc}%</span>
+              </div>
+              <div class="prog-bar">
+                <div class="prog-bar-fill" style="width: ${devPerc}%; background-color: var(--primary);"></div>
+              </div>
+            </div>
+
+            <div class="prog-bar-container" style="margin-top: 1rem;">
+              <div class="prog-bar-header">
+                <span>Validados: ${validated}/${total}</span>
+                <span>${valPerc}%</span>
+              </div>
+              <div class="prog-bar">
+                <div class="prog-bar-fill" style="width: ${valPerc}%; background-color: var(--info);"></div>
+              </div>
+            </div>
+
+            <div class="prog-bar-container" style="margin-top: 1rem;">
+              <div class="prog-bar-header">
+                <span>Bibliografía: ${bib}/${total}</span>
+                <span>${bibPerc}%</span>
+              </div>
+              <div class="prog-bar">
+                <div class="prog-bar-fill" style="width: ${bibPerc}%; background-color: var(--success);"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Switch tab views
+    function switchTab(tabName, diplomaId = '') {
+      activeTab = tabName;
+      activeDiplomaId = diplomaId;
+      currentFilter = 'all';
+
+      // Clear search
+      const searchBox = document.getElementById("txtSearch");
+      if (searchBox) searchBox.value = "";
+
+      renderTabs();
+
+      if (tabName === 'resumen') {
+        document.getElementById("sec-resumen").style.display = "block";
+        document.getElementById("sec-diploma").style.display = "none";
+        updateMetrics();
+        renderDiplomaCards();
+      } else {
+        document.getElementById("sec-resumen").style.display = "none";
+        document.getElementById("sec-diploma").style.display = "block";
+        
+        // Reset active filter button styling
+        setFilter('all');
+        renderDiplomaView(diplomaId);
+      }
+    }
+
+    // Set filter state
+    function setFilter(filterType) {
+      currentFilter = filterType;
+      // Update active filter button styling
+      const buttons = document.querySelectorAll(".filter-btn");
+      buttons.forEach(btn => btn.classList.remove("active"));
+      
+      const activeBtn = document.getElementById(`f-${filterType}`);
+      if (activeBtn) activeBtn.classList.add("active");
+
+      applyFiltersAndSearch();
+    }
+
+    // Render topics for a single diploma
+    function renderDiplomaView(dipId) {
+      const container = document.getElementById("topicsContainer");
+      container.innerHTML = "";
+
+      const dip = dashboardData[dipId];
+      if (!dip) return;
+
+      applyFiltersAndSearch();
+    }
+
+    // Filter and search topics in the current view
+    function applyFiltersAndSearch() {
+      const container = document.getElementById("topicsContainer");
+      container.innerHTML = "";
+
+      const dip = dashboardData[activeDiplomaId];
+      if (!dip) return;
+
+      const searchQuery = document.getElementById("txtSearch").value.toLowerCase().trim();
+
+      const filteredTopics = dip.topics.filter(t => {
+        // 1. Apply status filters
+        if (currentFilter === 'has_master' && !t.has_master) return false;
+        if (currentFilter === 'no_master' && t.has_master) return false;
+        if (currentFilter === 'is_validated' && !t.is_validated) return false;
+        if (currentFilter === 'no_validated' && t.is_validated) return false;
+        if (currentFilter === 'has_bib' && t.bib_count === 0) return false;
+        if (currentFilter === 'no_bib' && t.bib_count > 0) return false;
+
+        // 2. Apply search query
+        if (searchQuery) {
+          const numMatch = String(t.num) === searchQuery;
+          const titleMatch = t.title.toLowerCase().includes(searchQuery);
+          return numMatch || titleMatch;
+        }
+
+        return true;
+      });
+
+      if (filteredTopics.length === 0) {
+        container.innerHTML = `
+          <div class="card" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+            No se encontraron temas con los criterios actuales.
+          </div>
+        `;
+        return;
+      }
+
+      filteredTopics.forEach(t => {
+        const isExpanded = expandedTopics.has(`${activeDiplomaId}_${t.num}`);
+        
+        // Build status badges
+        let folderBadge = `<span class="pill pill-danger">✗ Sin Carpeta</span>`;
+        if (t.has_folder) {
+          folderBadge = `<span class="pill pill-success" title="Carpeta: ${t.folder_name}">✓ Carpeta</span>`;
+        }
+
+        let masterBadge = "";
+        let validationBadge = "";
+        
+        if (isAdmin) {
+          // Admin Mode: Render checkboxes for interactive editing
+          masterBadge = `
+            <div class="admin-controls" onclick="event.stopPropagation()">
+              <label class="admin-checkbox-label">
+                <input type="checkbox" ${t.has_master ? 'checked' : ''} onchange="toggleMasterStatus('${activeDiplomaId}', ${t.num}, this.checked)">
+                Doc. Maestro
+              </label>
+              ${t.master_registered_at ? `<span class="date-stamp">Alta: ${t.master_registered_at}</span>` : ''}
+            </div>
+          `;
+          
+          validationBadge = `
+            <div class="admin-controls" onclick="event.stopPropagation()">
+              <label class="admin-checkbox-label" style="opacity: ${t.has_master ? 1 : 0.4};">
+                <input type="checkbox" ${t.is_validated ? 'checked' : ''} ${t.has_master ? '' : 'disabled'} onchange="toggleValidationStatus('${activeDiplomaId}', ${t.num}, this.checked)">
+                Validado
+              </label>
+              ${t.validated_at ? `<span class="date-stamp">Val.: ${t.validated_at}</span>` : ''}
+            </div>
+          `;
+        } else {
+          // Read-only badges
+          if (t.has_master) {
+            masterBadge = `<span class="pill pill-success" title="Registrado el ${t.master_registered_at || 'N/D'}">✓ Desarrollado</span>`;
+          } else {
+            masterBadge = `<span class="pill pill-danger">✗ Pendiente Desarrollar</span>`;
+          }
+
+          if (t.is_validated) {
+            validationBadge = `<span class="pill pill-info" title="Validado el ${t.validated_at || 'N/D'}">✓ Validado</span>`;
+          } else {
+            validationBadge = `<span class="pill pill-secondary">✗ Sin Validar</span>`;
+          }
+        }
+
+        let bibBadge = `<span class="pill pill-danger">✗ Sin Bibliografía</span>`;
+        if (t.bib_count > 0) {
+          bibBadge = `<span class="pill pill-success" title="${t.bib_count} artículos encontrados">✓ Bib. (${t.bib_count} PDFs)</span>`;
+        }
+
+        // Expandable details block
+        let detailsHtml = "";
+        if (isExpanded) {
+          let fileListHtml = `<span style="font-size:0.85rem; color:var(--text-muted)">Carpeta vacía o sin archivos.</span>`;
+          if (t.all_files && t.all_files.length > 0) {
+            fileListHtml = `<ul class="file-list">`;
+            t.all_files.forEach(f => {
+              const isPdf = f.toLowerCase().endswith ? f.toLowerCase().endswith('.pdf') : f.toLowerCase().indexOf('.pdf') !== -1;
+              const isWord = f.toLowerCase().indexOf('.doc') !== -1 || f.toLowerCase().indexOf('.odt') !== -1;
+              const icon = isPdf ? '📄 (PDF)' : (isWord ? '📝 (Word)' : '📁');
+              fileListHtml += `<li class="file-item">${icon} ${f}</li>`;
+            });
+            fileListHtml += `</ul>`;
+          }
+
+          detailsHtml = `
+            <div class="topic-details" style="display: block;">
+              <div class="details-grid">
+                <div class="details-section">
+                  <h5>Carpeta en OneDrive</h5>
+                  <p style="font-size:0.85rem; font-family:monospace; word-break:break-all;">
+                    ${t.has_folder ? t.rel_folder_path : 'No se ha creado la carpeta en disco para este tema.'}
+                  </p>
+                  ${t.has_folder ? '' : `
+                    <div style="font-size:0.75rem; color:var(--warning); margin-top:0.5rem;">
+                      💡 Para crearla, añade una subcarpeta en tu ordenador con la numeración "${t.num}" (ej. "Tema ${t.num}").
+                    </div>
+                  `}
+                </div>
+                <div class="details-section">
+                  <h5>Archivos Detectados (${t.all_files ? t.all_files.length : 0})</h5>
+                  ${fileListHtml}
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        container.innerHTML += `
+          <div>
+            <div class="topic-row ${isExpanded ? 'expanded' : ''}" onclick="toggleExpandTopic('${activeDiplomaId}', ${t.num})">
+              <div class="topic-num-badge">Tema ${t.num}</div>
+              <div class="topic-title">${t.title}</div>
+              <div class="topic-status-pills">
+                ${folderBadge}
+                ${masterBadge}
+                ${validationBadge}
+                ${bibBadge}
+              </div>
+            </div>
+            ${detailsHtml}
+          </div>
+        `;
+      });
+    }
+
+    // Toggle expand/collapse topic row
+    function toggleExpandTopic(dipId, topicNum) {
+      const key = `${dipId}_${topicNum}`;
+      if (expandedTopics.has(key)) {
+        expandedTopics.delete(key);
+      } else {
+        expandedTopics.add(key);
+      }
+      applyFiltersAndSearch();
+    }
+
+    // Modal Control functions
+    function openLoginModal() {
+      document.getElementById("loginModal").style.display = "flex";
+      document.getElementById("adminPass").focus();
+    }
+    function closeLoginModal() {
+      document.getElementById("loginModal").style.display = "none";
+      document.getElementById("adminPass").value = "";
+    }
+
+    // Submit password verification
+    function handleLoginSubmit(event) {
+      event.preventDefault();
+      const pass = document.getElementById("adminPass").value;
+      verifyPassword(pass, true);
+    }
+
+    function verifyPassword(password, alertErrors = true) {
+      fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          isAdmin = true;
+          adminPassword = password;
+          // Persist session
+          sessionStorage.setItem("admin_password", password);
+          
+          // UI adjustments
+          document.getElementById("btnAdminFloat").style.display = "none";
+          document.getElementById("adminBanner").style.display = "flex";
+          closeLoginModal();
+          
+          // Re-render
+          if (activeTab === 'diploma') {
+            renderDiplomaView(activeDiplomaId);
+          } else {
+            initDashboard();
+          }
+        } else {
+          if (alertErrors) alert("Contraseña incorrecta.");
+          sessionStorage.removeItem("admin_password");
+        }
+      })
+      .catch(err => {
+        console.error("Error verifying admin status:", err);
+        if (alertErrors) alert("Error de red al intentar iniciar sesión.");
+      });
+    }
+
+    function logoutAdmin() {
+      isAdmin = false;
+      adminPassword = "";
+      sessionStorage.removeItem("admin_password");
+      document.getElementById("btnAdminFloat").style.display = "flex";
+      document.getElementById("adminBanner").style.display = "none";
+      
+      if (activeTab === 'diploma') {
+        renderDiplomaView(activeDiplomaId);
+      } else {
+        initDashboard();
+      }
+    }
+
+    // API calls to toggle status in Admin Mode
+    function toggleMasterStatus(dipId, topicNum, value) {
+      fetch("/api/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          password: adminPassword,
+          dip_id: dipId,
+          topic_num: topicNum,
+          field: "has_master",
+          value: value
+        })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          // Update local memory
+          const dip = dashboardData[dipId];
+          const topic = dip.topics.find(t => t.num === topicNum);
+          if (topic) {
+            topic.has_master = res.updated_topic.has_master;
+            topic.master_registered_at = res.updated_topic.master_registered_at;
+            // When has_master is disabled, validation is also disabled
+            if (!value) {
+              topic.is_validated = false;
+              topic.validated_at = null;
+            }
+          }
+          applyFiltersAndSearch();
+        } else {
+          alert("Error: " + res.message);
+          // Refresh data to restore checkbox state
+          fetchData();
+        }
+      })
+      .catch(err => {
+        console.error("Error updating master status:", err);
+        alert("Error de red al actualizar.");
+      });
+    }
+
+    function toggleValidationStatus(dipId, topicNum, value) {
+      fetch("/api/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          password: adminPassword,
+          dip_id: dipId,
+          topic_num: topicNum,
+          field: "is_validated",
+          value: value
+        })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          // Update local memory
+          const dip = dashboardData[dipId];
+          const topic = dip.topics.find(t => t.num === topicNum);
+          if (topic) {
+            topic.is_validated = res.updated_topic.is_validated;
+            topic.validated_at = res.updated_topic.validated_at;
+          }
+          applyFiltersAndSearch();
+        } else {
+          alert("Error: " + res.message);
+          fetchData();
+        }
+      })
+      .catch(err => {
+        console.error("Error updating validation status:", err);
+        alert("Error de red al actualizar.");
+      });
+    }
+
+    // Export a static read-only dashboard for sharing
+    function exportPublicDashboard() {
+      if (!isAdmin) return;
+      
+      const btn = event.target;
+      const originalText = btn.innerText;
+      btn.innerText = "Exportando...";
+      btn.disabled = true;
+
+      fetch("/api/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: adminPassword })
+      })
+      .then(res => {
+        if (res.ok) {
+          return res.blob();
+        }
+        throw new Error("No se pudo generar el archivo estático.");
+      })
+      .then(blob => {
+        // Trigger download
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "dashboard_publico.html";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        
+        btn.innerText = originalText;
+        btn.disabled = false;
+        alert("¡Dashboard estático exportado con éxito!\nSe ha descargado como 'dashboard_publico.html'. Puedes compartir este archivo por OneDrive o publicarlo directamente en la web en modo lectura.");
+      })
+      .catch(err => {
+        console.error("Error exporting dashboard:", err);
+        alert("Error al exportar: " + err.message);
+        btn.innerText = originalText;
+        btn.disabled = false;
+      });
+    }
+  </script>
+</body>
+</html>
