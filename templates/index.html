@@ -422,11 +422,11 @@
       background-color: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 0.75rem;
-      padding: 1rem 1.5rem;
-      display: grid;
-      grid-template-columns: 80px 1fr auto;
-      align-items: center;
-      gap: 1.5rem;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
       box-shadow: var(--shadow);
       cursor: pointer;
       transition: all 0.2s ease;
@@ -436,59 +436,88 @@
       transform: translateX(4px);
     }
 
+    .topic-row-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
     .topic-num-badge {
       font-weight: 800;
       font-size: 0.95rem;
       color: var(--primary);
-      text-transform: uppercase;
     }
 
     .topic-title {
       font-weight: 600;
       font-size: 0.95rem;
       line-height: 1.4;
+      color: var(--text-main);
     }
 
-    .topic-status-pills {
+    .topic-info-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      width: 100%;
+      padding-top: 0.6rem;
+      border-top: 1px dashed var(--border-color);
+    }
+
+    .topic-info-item {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
     }
 
-    .pill {
+    .info-label {
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    .info-val {
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 0.25rem;
+      font-size: 0.8rem;
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
-      padding: 0.35rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
+      gap: 0.3rem;
     }
 
-    .pill-success {
+    .val-si {
       background-color: var(--success-bg);
       color: var(--success);
     }
 
-    .pill-warning {
-      background-color: var(--warning-bg);
-      color: var(--warning);
-    }
-
-    .pill-danger {
+    .val-no {
       background-color: var(--danger-bg);
       color: var(--danger);
     }
 
-    .pill-info {
-      background-color: var(--info-bg);
-      color: var(--info);
+    .val-falta {
+      background-color: var(--warning-bg);
+      color: var(--warning);
     }
 
-    .pill-secondary {
-      background-color: var(--border-color);
+    .info-date {
+      font-size: 0.75rem;
       color: var(--text-muted);
+      font-weight: 500;
+      margin-left: 0.25rem;
+      font-style: italic;
+    }
+
+    .admin-checkbox {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: var(--primary);
     }
 
     /* Expandable details area */
@@ -1158,54 +1187,54 @@
       filteredTopics.forEach(t => {
         const isExpanded = expandedTopics.has(`${activeDiplomaId}_${t.num}`);
         
-        // Build status badges
-        let folderBadge = `<span class="pill pill-danger">✗ Sin Carpeta</span>`;
-        if (t.has_folder) {
-          folderBadge = `<span class="pill pill-success" title="Carpeta: ${t.folder_name}">✓ Carpeta</span>`;
+        // 1. Bibliografía status: si / no / falta
+        let bibHtml = "";
+        if (t.bib_count > 0) {
+          bibHtml = `<span class="info-val val-si">Sí (${t.bib_count} PDFs)</span>`;
+        } else if (t.has_folder) {
+          bibHtml = `<span class="info-val val-no">No</span>`;
+        } else {
+          bibHtml = `<span class="info-val val-falta">Falta</span>`;
         }
 
-        let masterBadge = "";
-        let validationBadge = "";
-        
+        // 2. Documento status: si (date) / no
+        let masterHtml = "";
         if (isAdmin) {
-          // Admin Mode: Render checkboxes for interactive editing
-          masterBadge = `
-            <div class="admin-controls" onclick="event.stopPropagation()">
-              <label class="admin-checkbox-label">
-                <input type="checkbox" ${t.has_master ? 'checked' : ''} onchange="toggleMasterStatus('${activeDiplomaId}', ${t.num}, this.checked)">
-                Doc. Maestro
-              </label>
-              ${t.master_registered_at ? `<span class="date-stamp">Alta: ${t.master_registered_at}</span>` : ''}
-            </div>
-          `;
-          
-          validationBadge = `
-            <div class="admin-controls" onclick="event.stopPropagation()">
-              <label class="admin-checkbox-label" style="opacity: ${t.has_master ? 1 : 0.4};">
-                <input type="checkbox" ${t.is_validated ? 'checked' : ''} ${t.has_master ? '' : 'disabled'} onchange="toggleValidationStatus('${activeDiplomaId}', ${t.num}, this.checked)">
-                Validado
-              </label>
-              ${t.validated_at ? `<span class="date-stamp">Val.: ${t.validated_at}</span>` : ''}
+          masterHtml = `
+            <div style="display: inline-flex; align-items: center; gap: 0.3rem;" onclick="event.stopPropagation()">
+              <input type="checkbox" class="admin-checkbox" ${t.has_master ? 'checked' : ''} onchange="toggleMasterStatus('${activeDiplomaId}', ${t.num}, this.checked)">
+              <span class="info-val ${t.has_master ? 'val-si' : 'val-no'}">
+                ${t.has_master ? 'Sí' : 'No'}
+              </span>
+              ${t.master_registered_at ? `<span class="info-date">(${t.master_registered_at})</span>` : ''}
             </div>
           `;
         } else {
-          // Read-only badges
           if (t.has_master) {
-            masterBadge = `<span class="pill pill-success" title="Registrado el ${t.master_registered_at || 'N/D'}">✓ Desarrollado</span>`;
+            masterHtml = `<span class="info-val val-si">Sí <span class="info-date">(${t.master_registered_at || 'N/D'})</span></span>`;
           } else {
-            masterBadge = `<span class="pill pill-danger">✗ Pendiente Desarrollar</span>`;
-          }
-
-          if (t.is_validated) {
-            validationBadge = `<span class="pill pill-info" title="Validado el ${t.validated_at || 'N/D'}">✓ Validado</span>`;
-          } else {
-            validationBadge = `<span class="pill pill-secondary">✗ Sin Validar</span>`;
+            masterHtml = `<span class="info-val val-no">No</span>`;
           }
         }
 
-        let bibBadge = `<span class="pill pill-danger">✗ Sin Bibliografía</span>`;
-        if (t.bib_count > 0) {
-          bibBadge = `<span class="pill pill-success" title="${t.bib_count} artículos encontrados">✓ Bib. (${t.bib_count} PDFs)</span>`;
+        // 3. Validación status: si (date) / no
+        let validationHtml = "";
+        if (isAdmin) {
+          validationHtml = `
+            <div style="display: inline-flex; align-items: center; gap: 0.3rem;" onclick="event.stopPropagation()">
+              <input type="checkbox" class="admin-checkbox" ${t.is_validated ? 'checked' : ''} ${t.has_master ? '' : 'disabled'} onchange="toggleValidationStatus('${activeDiplomaId}', ${t.num}, this.checked)">
+              <span class="info-val ${t.is_validated ? 'val-si' : 'val-no'}" style="opacity: ${t.has_master ? 1 : 0.5};">
+                ${t.is_validated ? 'Sí' : 'No'}
+              </span>
+              ${t.validated_at ? `<span class="info-date">(${t.validated_at})</span>` : ''}
+            </div>
+          `;
+        } else {
+          if (t.is_validated) {
+            validationHtml = `<span class="info-val val-si">Sí <span class="info-date">(${t.validated_at || 'N/D'})</span></span>`;
+          } else {
+            validationHtml = `<span class="info-val val-no">No</span>`;
+          }
         }
 
         // Expandable details block
@@ -1249,13 +1278,26 @@
         container.innerHTML += `
           <div>
             <div class="topic-row ${isExpanded ? 'expanded' : ''}" onclick="toggleExpandTopic('${activeDiplomaId}', ${t.num})">
-              <div class="topic-num-badge">Tema ${t.num}</div>
-              <div class="topic-title">${t.title}</div>
-              <div class="topic-status-pills">
-                ${folderBadge}
-                ${masterBadge}
-                ${validationBadge}
-                ${bibBadge}
+              <div class="topic-row-header">
+                <div>
+                  <span class="topic-num-badge">Tema ${t.num}.</span>
+                  <span class="topic-title">${t.title}</span>
+                </div>
+                <div style="font-size: 0.8rem; opacity: 0.5; color: var(--text-muted);">${isExpanded ? '▲' : '▼'}</div>
+              </div>
+              <div class="topic-info-grid">
+                <div class="topic-info-item">
+                  <span class="info-label">Bibliografía:</span>
+                  ${bibHtml}
+                </div>
+                <div class="topic-info-item">
+                  <span class="info-label">Documento:</span>
+                  ${masterHtml}
+                </div>
+                <div class="topic-info-item">
+                  <span class="info-label">Validación:</span>
+                  ${validationHtml}
+                </div>
               </div>
             </div>
             ${detailsHtml}
